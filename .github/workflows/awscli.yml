@@ -1,0 +1,32 @@
+name: awscli
+
+on: [push]
+
+jobs:
+  awscli:
+    runs-on: ubuntu-latest
+    services:
+      localstack:
+        image: localstack/localstack
+        env:
+          SERVICES: 'dynamodb'
+        ports:
+          - "4566:4566"
+          - "8080:8080"
+    env:
+      AWS_ACCESS_KEY_ID   : "foo"
+      AWS_SECRET_ACCESS_KEY: "bar"
+      AWS_DEFAULT_REGION  : "eu-west-1"
+    steps:
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -q -y curl unzip python3-setuptools python3-pip
+        python3 -m pip install awscli
+        aws --version
+    - name: Test
+      run: |
+        curl localhost:8080/health
+        aws --endpoint http://localhost:4566 --debug dynamodb create-table --table-name awssdkswift-testtable --attribute-definitions AttributeName=id,AttributeType=N --key-schema AttributeName=id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+        aws --endpoint http://localhost:4566 --debug dynamodb delete-table --table-name awssdkswift-testtable
+
