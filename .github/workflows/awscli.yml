@@ -28,5 +28,6 @@ jobs:
       run: |
         curl localhost:8080/health
         aws --endpoint http://localhost:4566 --debug dynamodb create-table --table-name awssdkswift-testtable --attribute-definitions AttributeName=id,AttributeType=N --key-schema AttributeName=id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+        sleep 10
         aws --endpoint http://localhost:4566 --debug dynamodb delete-table --table-name awssdkswift-testtable
 
