@@ -1,6 +1,8 @@
 name: awscli
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   awscli:
